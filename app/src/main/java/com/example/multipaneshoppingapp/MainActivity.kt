@@ -15,14 +15,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
@@ -31,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.multipaneshoppingapp.ui.theme.MultipaneShoppingAppTheme
+import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +67,7 @@ fun MainScreen(){
         Row (modifier = Modifier.fillMaxSize()){
             ProductList(products=products, selectedProduct, onProductSelected = {selectedProduct = it}, modifier = Modifier.weight(1f))
             Spacer(modifier = Modifier.width(16.dp))
+            VerticalDivider(color = Color.Gray, thickness = 1.dp)
             subpane(selectedProduct, modifier = Modifier.weight(1f))
         }
     }else{
@@ -81,13 +87,14 @@ fun MainScreen(){
 // ProductList does not modify the state directly but instead triggers the onProductSelected function to notify MainScreen
 fun ProductList(products:List<Product>, selectedProduct: Product?,onProductSelected: (Product) -> Unit, modifier: Modifier){
     LazyColumn (
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.SpaceEvenly
     ){
         items(products){product ->
             Card(
-                onClick = {onProductSelected(product)}
+                onClick = {onProductSelected(product)},
+                modifier = Modifier.padding(4.dp)
             ) {
-                Text(text = product.name)
+                Text(text = product.name, fontSize = 24.sp, modifier = Modifier.padding(12.dp))
             }
         }
     }
@@ -95,15 +102,19 @@ fun ProductList(products:List<Product>, selectedProduct: Product?,onProductSelec
 @Composable
 fun subpane(selectedProduct:Product?, modifier: Modifier){
     if (selectedProduct == null){
-        Text("Select a product to view details.")
+        Text("Select a product to view details.",
+            modifier = Modifier.padding(8.dp))
     }else{
-        Column {
+        Column (
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
             Text(
                 text = "Price: ${selectedProduct.price}",
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp
             )
-            Text(text = selectedProduct.description)
+            Text(text = selectedProduct.description,
+                fontSize = 20.sp)
         }
     }
 }
